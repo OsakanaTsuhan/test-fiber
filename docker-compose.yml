@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: gifma-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gifma_db
+      POSTGRES_USER: gifma_user
+      POSTGRES_PASSWORD: gifma_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - gifma-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gifma_user -d gifma_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  gifma-network:
+    driver: bridge
