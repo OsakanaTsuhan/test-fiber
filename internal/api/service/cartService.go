@@ -1,20 +1,20 @@
-package rest
+package service
 
 import (
 	"gifma-backend/config"
 	"gifma-backend/internal/helper"
 	"gifma-backend/token"
 
-	"database/sql"
-
 	"github.com/gofiber/fiber/v2"
 )
 
-type RestHandler struct {
-	App        *fiber.App
-	DB         *sql.DB
-	Auth       helper.Auth
+type CartService struct {
+	// Repo       repository.UserRepository
 	Config     config.AppConfig
 	Crypto     helper.Crypto
 	TokenMaker token.Maker
+}
+
+func (s *CartService) CreateCart(c *fiber.Ctx) error {
+	return nil
 }

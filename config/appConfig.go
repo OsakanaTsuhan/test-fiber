@@ -5,7 +5,11 @@ import (
 )
 
 type AppConfig struct {
-	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
+	ServerAddress     string `mapstructure:"SERVER_ADDRESS"`
+	AppSecret         string `mapstructure:"APP_SECRET"`
+	AppCryptKey       string `mapstructure:"CRYPT_KEY"`
+	EncryptionKey     string `mapstructure:"ENCRYPTION_KEY"`
+	TokenSymmetricKey string `mapstructure:"TOKEN_SYMMETRIC_KEY"`
 }
 
 func SetupEnv(path string) (cfg AppConfig, err error) {

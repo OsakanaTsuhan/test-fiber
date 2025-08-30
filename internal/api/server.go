@@ -2,6 +2,10 @@ package api
 
 import (
 	"gifma-backend/config"
+	"gifma-backend/internal/api/rest"
+	"gifma-backend/internal/api/rest/handlers"
+	"gifma-backend/internal/helper"
+	"gifma-backend/token"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,14 +23,38 @@ func StartServer(config config.AppConfig) {
 	})
 
 	app.Use(c)
+
+	auth := helper.SetupAuth(config.AppSecret)
+	crypto := helper.SetupCrypto(config.AppCryptKey)
+
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+	if err != nil {
+		log.Fatalf("cannot create token maker: %v\n", err)
+	}
+
+	rh := &rest.RestHandler{
+		App: app,
+		// DB:         db,
+		Auth:       auth,
+		Config:     config,
+		Crypto:     crypto,
+		TokenMaker: tokenMaker,
+	}
+
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.SendString("OK")
 	})
 
-	var err error
+	setupRoutes(rh)
+
 	log.Printf("Server starting on port %s", config.ServerAddress)
 	err = app.Listen(config.ServerAddress)
 	if err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
+}
+
+func setupRoutes(rh *rest.RestHandler) {
+	// user handler
+	handlers.SetupUserRoutes(rh)
 }
