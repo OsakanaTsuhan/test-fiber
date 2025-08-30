@@ -31,3 +31,13 @@ func SetupListingRoutes(rh *rest.RestHandler) {
 func (h *ListingHandler) CreateListing(c *fiber.Ctx) error {
 	return h.svc.CreateListing(c)
 }
+
+func (h *ListingHandler) GetAllListing(c *fiber.Ctx) error {
+	result, err := h.svc.GetAllListing()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(result)
+}
